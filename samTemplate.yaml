@@ -7,7 +7,7 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: nodejs6.10
-      CodeUri: ./
+      CodeUri: s3://midwest-hackathon/time.zip
       Events:
         MyTimeApi:
           Type: Api
