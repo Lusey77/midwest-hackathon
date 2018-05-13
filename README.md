@@ -1,2 +1,2 @@
 # midwest-hackathon
-A scribe and assistant app for doctors
+A scribe and assistant app for physicians
