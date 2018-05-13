@@ -9,8 +9,5 @@ Resources:
       Runtime: nodejs6.10
       CodeUri: ./
       Events:
-        MyTimeApi:
-          Type: Api
-          Properties:
-            Path: /TimeResource
-            Method: GET
+        AlexaSkillEvent:
+          Type: AlexaSkill
