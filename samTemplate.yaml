@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Outputs the time
+Description: Does Alexa shit
 Resources:
-  TimeFunction:
+  AlexaSkill:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
@@ -11,3 +11,27 @@ Resources:
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill
+  DDBTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "PatientId"
+          AttributeType: "S"
+        -
+          AttributeName: "FirstName"
+          AttributeType: "S"
+        -
+          AttributeName: "LastName"
+          AttributeType: "S"
+        - 
+          AttributeName: "DateOfBirth"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "PatientId"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+      Table: "Patients"
