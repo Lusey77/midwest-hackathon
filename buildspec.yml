@@ -2,9 +2,23 @@ version: 0.1
 phases:
   install:
     commands:
-      - npm install time
-      - aws cloudformation package --template-file samTemplate.yaml --s3-bucket midwest-hackathon 
+      - echo Installing dependencies
+      - npm install -g mocha
+      - echo Creating deploy package
+      - aws cloudformation package --template-file samTemplate.yaml --s3-bucket midwest-hackathon
                                    --output-template-file outputSamTemplate.yaml
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies
+      - npm install unit.js
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Running tests
+      - mocha unitTests.js
+  post_build:
+    commands:
+      - echo Build completed on `date`
 artifacts:
   type: zip
   files:

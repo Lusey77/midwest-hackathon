@@ -6,17 +6,17 @@ exports.handler = function (event, context) {
             this.emit(':ask', 'Welcome to this recording app. I can help you by recording your voice. I am ready to start recording at any time. Just say record this followed by what ever you would like to record.');
         },
         'Record': function () {
-            let intent = this;
+            const intent = this;
             this.attributes['recording'] = event.request.intent.slots.Query.value;
-            let recording = this.attributes['recording'];
+            const recording = this.attributes['recording'];
             console.log();
             var speechOutput = '<break time="0.3s"/> If you would like to record something eles, just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just record?';
 
             intent.emit(':ask','You recorded: '+ recording + speechOutput, 'Just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?');
         },
         'PreviousRecord': function(){
-            let intent = this;
-            let record = this.attributes['recording'];
+            const intent = this;
+            const record = this.attributes['recording'];
             if (record === undefined){
                 intent.emit(':ask', 'You have not recorded anything during this session. If you would like to record something, just say record this followed by what ever you would like to record.', 'Just say record this followed by what ever you would like to record.');
             }else{
