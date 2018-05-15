@@ -10,15 +10,12 @@ phases:
   pre_build:
     commands:
       - echo Installing source NPM dependencies
-      - npm install unit.js
+      - npm install
   build:
     commands:
-      - echo Build started on `date`
       - echo Running tests
-      - mocha unitTests.js
-  post_build:
-    commands:
-      - echo Build completed on `date`
+      - npm run test
+      - npm run ftest
 artifacts:
   type: zip
   files:
