@@ -50,7 +50,7 @@
     "postversion": "git push && git push --tags",
     "preftest": "webpack && npm run pretest",
     "ftest": "mocha './src/**/*.ftest.js'",
-    "pretest": "tsc && npm run lint",
+    "pretest": "tsc",
     "test": "mocha './src/**/*.test.js'",
     "precoverage": "npm run pretest",
     "coverage": "istanbul cover --include-all-sources --root src/ -x \"**/*test.js\" -x \"assets/MockHandler.js\" _mocha \"src/**/*.test.js\" -- --require ignore-styles -R spec && remap-istanbul -i ./coverage/coverage.json -o ./coverage/ts-report -t html && ./node_modules/.bin/remap-istanbul -i coverage/coverage.json -t lcovonly > coverage/lcov-ts.info",
