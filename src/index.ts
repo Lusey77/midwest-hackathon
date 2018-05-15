@@ -11,5 +11,5 @@ const handler = function(event: Alexa.RequestBody<Alexa.Request>, context: Alexa
         'AMAZON.CancelIntent': function () { new AlexaController(this).cancel(); },
         'AMAZON.StopIntent': function () { new AlexaController(this).stop(); },
         'Unhandled': function() { new AlexaController(this).unhandled(); }
-    })
-}; 
+    });
+}); 
