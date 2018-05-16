@@ -19,6 +19,9 @@ class MockHandler {
     emit(event, ...args) {
         return true;
     }
+    setEvent(event) {
+        this.event = event;
+    }
 }
 exports.MockHandler = MockHandler;
 //# sourceMappingURL=testing.js.map

@@ -1,10 +1,13 @@
 import * as Alexa from "alexa-sdk";
+import {RequestBody} from "alexa-sdk";
 
 export class MockHandler implements Alexa.Handler<Alexa.Request> {
     on: any;
+
     emit(event: string, ...args: any[]): boolean {
         return true;
     }
+
     emitWithState: any = {};
     state: any = {};
     handler: any = {};
@@ -18,4 +21,8 @@ export class MockHandler implements Alexa.Handler<Alexa.Request> {
     callback: any = {};
     t: any = {};
     response: any = {};
+
+    setEvent(event: RequestBody<Alexa.Request>) {
+        this.event = event;
+    }
 }
