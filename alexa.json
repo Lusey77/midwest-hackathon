@@ -1,0 +1,70 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "scribe",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "GetName",
+                    "slots": [
+                        {
+                            "name": "PatientId",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "patient {PatientId}",
+                        "the patient id is {PatientId}",
+                        "patient i.d. {PatientId}",
+                        "patient i. d. {PatientId}",
+                        "patient id is {PatientId}",
+                        "id {PatientId}",
+                        "patient id {PatientId}"
+                    ]
+                },
+                {
+                    "name": "GetBirthday",
+                    "slots": [
+                        {
+                            "name": "birthday",
+                            "type": "AMAZON.DATE"
+                        }
+                    ],
+                    "samples": [
+                        "{birthday}"
+                    ]
+                },
+                {
+                    "name": "BloodPressure",
+                    "slots": [
+                        {
+                            "name": "systolic",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "diastolic",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "blood pressure is {systolic} over {diastolic}",
+                        "The blood pressure is {systolic} over {diastolic}",
+                        "{systolic} over {diastolic}"
+                    ]
+                }
+            ],
+            "types": []
+        }
+    }
+}
