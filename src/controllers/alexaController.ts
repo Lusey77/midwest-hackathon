@@ -40,7 +40,7 @@ export class AlexaController extends IntentController {
         this.handler.attributes['physician_id'] = (1928374650).toString();
         this.handler.attributes['patient_id'] = (request.intent.slots.PatientId.value);
 
-        let params = {
+        const params = {
             TableName: 'Patients',
             Key: {
                 'PatientId': {S: this.handler.attributes['patient_id']},
@@ -49,7 +49,7 @@ export class AlexaController extends IntentController {
 
         this._dynamodb.getItem(params, function (err, data) {
             if (err) {
-                 this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
+                this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
             }
 
             this.handler.attributes['first_name'] = data.Item.FirstName.S;
@@ -59,7 +59,7 @@ export class AlexaController extends IntentController {
             const firstName = this.handler.attributes['first_name'];
             const lastName = this.handler.attributes['last_name'];
 
-            let speechOutput = `${pause} Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`;
+            const speechOutput = `${pause} Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`;
 
             this.handler.emit(':ask', `Starting session for patient: ${firstName} ${lastName} ${speechOutput}`, ``);
         });
@@ -82,8 +82,8 @@ export class AlexaController extends IntentController {
     getBloodPressure() {
         const request: IntentRequest = this.handler.event.request;
 
-        let systolic = request.intent.slots.systolic.value;
-        let diastolic = request.intent.slots.diastolic.value;
+        const systolic = request.intent.slots.systolic.value;
+        const diastolic = request.intent.slots.diastolic.value;
 
         if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
             this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
@@ -105,6 +105,9 @@ export class AlexaController extends IntentController {
             this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
         } else {
             const note_to_add = request.intent.slots.note.value;
+
+            const date = this.handler.attributes['current_date'].toString().slice(0, -24);
+
             const params = {
                 TableName: 'Patients',
                 Item: {
@@ -113,17 +116,22 @@ export class AlexaController extends IntentController {
                     'LastName': {S: this.handler.attributes['last_name']},
                     'DateOfBirth': {S: this.handler.attributes['date_of_birth']},
                     'Note': {
-                        SS: [
-                            this.handler.attributes['current_date'].toString(),
-                            this.handler.attributes['physician_id'],
-                            note_to_add
+                        L: [
+                            {
+                                M: {
+                                    'Date': {'S': this.handler.attributes['current_date'].toString()},
+                                    'PhysicianId': {'S': this.handler.attributes['physician_id']},
+                                    'NoteAdded': {'S': note_to_add},
+                                }
+                            }
                         ]
                     }
+
                 },
             };
             this._dynamodb.putItem(params, function (err) {
                 if (err) {
-                    //TODO: Emit event
+                    // TODO: Emit event
                 } else {
                     this.handler.emit(':ask', 'You recorded' + note_to_add + pause + 'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record.', '');
                 }
