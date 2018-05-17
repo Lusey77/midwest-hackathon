@@ -23,6 +23,9 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
         'BloodPressure': function () {
             new AlexaController(this).getBloodPressure();
         },
+        'TakeNote': function () {
+            new AlexaController(this).takeNote();
+        },
         'AMAZON.HelpIntent': function () {
             new AmazonController(this).help();
         },

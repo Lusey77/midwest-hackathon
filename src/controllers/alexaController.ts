@@ -37,6 +37,7 @@ export class AlexaController extends IntentController {
     getName() {
         const request: IntentRequest = this.handler.event.request;
 
+        this.handler.attributes['physician_id'] = (1928374650).toString();
         this.handler.attributes['patient_id'] = (request.intent.slots.PatientId.value);
 
         let params = {
@@ -48,7 +49,7 @@ export class AlexaController extends IntentController {
 
         this._dynamodb.getItem(params, function (err, data) {
             if (err) {
-                this.handler.emit(':tell', 'There was an error inside the query.');
+                 this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
             }
 
             this.handler.attributes['first_name'] = data.Item.FirstName.S;
@@ -74,7 +75,7 @@ export class AlexaController extends IntentController {
         } else if (this.handler.attributes['patient_stated_dob'] !== this.handler.attributes['date_of_birth']) {
             this.handler.emit(':ask', 'The birthday that you gave does not match what is stated in the database. Please verify the birthday again or select a different patient.');
         } else {
-            this.handler.emit(':ask', `We will now start entering information for ${this.handler.attributes['first_name']} ${pause} born on ${this.handler.attributes['date_of_birth']} ${pause}. Please give the systolic and diastolic measurements for ${this.handler.attributes['first_name']} ${pause} Please say the systolic measurement over the diastolic measurement.`, '');
+            this.handler.emit(':ask', `We will now start entering information for ${this.handler.attributes['first_name']} ${pause} born on ${this.handler.attributes['date_of_birth']} ${pause}. To record a note say take note, record note, or make note followed by the note that you would like to record.`, '');
         }
     }
 
@@ -90,6 +91,43 @@ export class AlexaController extends IntentController {
             this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
         } else {
             this.handler.emit(':ask', '' + this.handler.attributes['first_name'] + "'s blood pressure is " + systolic + ' over ' + diastolic, '');
+        }
+    }
+
+    takeNote() {
+        const request: IntentRequest = this.handler.event.request;
+
+        this.handler.attributes['current_date'] = new Date();
+
+        if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
+            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+        } else if (this.handler.attributes['first_name'] !== undefined && this.handler.attributes['date_of_birth'] === undefined) {
+            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
+        } else {
+            const note_to_add = request.intent.slots.note.value;
+            const params = {
+                TableName: 'Patients',
+                Item: {
+                    'PatientId': {S: this.handler.attributes['patient_id']},
+                    'FirstName': {S: this.handler.attributes['first_name']},
+                    'LastName': {S: this.handler.attributes['last_name']},
+                    'DateOfBirth': {S: this.handler.attributes['date_of_birth']},
+                    'Note': {
+                        SS: [
+                            this.handler.attributes['current_date'].toString(),
+                            this.handler.attributes['physician_id'],
+                            note_to_add
+                        ]
+                    }
+                },
+            };
+            this._dynamodb.putItem(params, function (err) {
+                if (err) {
+                    //TODO: Emit event
+                } else {
+                    this.handler.emit(':ask', 'You recorded' + note_to_add + pause + 'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record.', '');
+                }
+            });
         }
     }
 }
