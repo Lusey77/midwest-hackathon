@@ -85,6 +85,27 @@
                         "add note {note}",
                         "take note {note}"
                     ]
+                },
+                {
+                    "name": "GetLastNote",
+                    "slots": [],
+                    "samples": [
+                        "get the last note",
+                        "what was the last note",
+                        "tell me the last note",
+                        "what is the last note",
+                        "give me the last note",
+                        "what was the last note recorded",
+                        "what is the last note recorded",
+                        "get the last note recorded",
+                        "get the last note in the system",
+                        "what is the last note in the system",
+                        "what is the systems last note recorded",
+                        "get the last note recorded in the system",
+                        "give me the last note in the system",
+                        "give me the last note recorded",
+                        "give me the last note recorded in the system"
+                    ]
                 }
             ],
             "types": []
