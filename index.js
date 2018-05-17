@@ -94,20 +94,22 @@ exports.handler =  function (event, context) {
             else{
                 let note_to_add = event.request.intent.slots.note.value;
                 const pause = '<break time="0.3s"/>';
+                let date = intent.attributes['current_date'].toString().slice(0, -24);
                 var params = {
                     TableName: 'Patients',
                     Item:  {
-                        "PatientId": {S: intent.attributes['patient_id']}, 
+                        "PatientId": {S: intent.attributes['patient_id']},
                         "FirstName": {S: intent.attributes['first_name']},
                         "LastName": {S: intent.attributes['last_name']},
                         "DateOfBirth": {S: intent.attributes['date_of_birth']},
-                        "Note": {SS: [
-                            intent.attributes['current_date'].toString(),
-                            intent.attributes['physician_id'],
-                            note_to_add
-                            ]
-
-                        }
+                        "Note": {L: [
+                            {M: {
+                                "Date": {"S": intent.attributes['current_date'].toString()},
+                                "PhysicianId": {"S": intent.attributes['physician_id']},
+                                "NoteAdded": {"S": note_to_add},
+                                }
+                            }
+                        ]}
                     },
                 };
 
