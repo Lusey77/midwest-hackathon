@@ -3,8 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import {MockHandler} from '../testing';
-import {AmazonController} from "./amazonController";
-
+import {AmazonController} from './amazonController';
 
 chai.use(sinonChai);
 let expect = chai.expect;
@@ -57,7 +56,7 @@ describe('Amazon Controller', () => {
             alexaController.unhandled();
 
             expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':ask', 'I am sorry, but  do not know how to handle your request. If you would like to record, just say record this followed by what ever you would like to record.');
+            expect(emitStub).to.have.been.calledWith(':ask', 'I am sorry, but do not know how to handle your request. If you would like to record, just say record this followed by what ever you would like to record.');
         });
     });
 });
