@@ -60,6 +60,6 @@ typings/
 # dotenv environment variables file
 .env
 
-# others
+# coveralls
 .coveralls.yml
 
