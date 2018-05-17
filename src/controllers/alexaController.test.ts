@@ -2,9 +2,10 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
+import {IntentRequest, RequestBody, SlotValue} from 'alexa-sdk';
 import {MockHandler} from '../testing';
 import {AlexaController} from './alexaController';
-import {IntentRequest, RequestBody, SlotValue} from "alexa-sdk";
+import {interjection, pause} from './ssml.helpers';
 
 chai.use(sinonChai);
 let expect = chai.expect;
@@ -49,9 +50,9 @@ describe('Alexa Controller', () => {
 
             const event: RequestBody<IntentRequest> = {
                 version: '1',
-                session: null,
+                session: undefined,
                 request: request,
-                context: null
+                context: undefined
             };
 
             mockHandler.setEvent(event);
@@ -62,7 +63,7 @@ describe('Alexa Controller', () => {
             alexaController.record();
 
             expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':ask', 'You recorded: previous record<break time="0.3s"/> If you would like to record something else, just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just record?', 'Just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?');
+            expect(emitStub).to.have.been.calledWith(':ask', `You recorded: previous record ${pause} If you would like to record something else, just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?`, `Just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?`);
         });
     });
 
@@ -91,7 +92,7 @@ describe('Alexa Controller', () => {
                 alexaController.previousRecord();
 
                 expect(emitStub).to.have.been.calledOnce;
-                expect(emitStub).to.have.been.calledWith(':ask', '<say-as interpret-as="interjection">all righty!</say-as> You previously recorded the following: previous record <break time="0.3s"/> If you would like to record something eles, just say record this followed by what ever you would like to record.');
+                expect(emitStub).to.have.been.calledWith(':ask', `${interjection('all righty!')} You previously recorded the following: previous record ${pause} If you would like to record something else, just say record this followed by what ever you would like to record.`);
             });
         });
     });

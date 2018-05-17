@@ -1,9 +1,9 @@
-import * as Alexa from 'alexa-sdk';
+import {Handler, Request} from 'alexa-sdk';
 
 export class IntentController {
-    protected handler: Alexa.Handler<Alexa.Request>;
+    protected handler: Handler<Request>;
 
-    constructor(handler: Alexa.Handler<Alexa.Request>) {
+    constructor(handler: Handler<Request>) {
         this.handler = handler;
     }
 }

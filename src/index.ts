@@ -1,8 +1,8 @@
 import * as Alexa from 'alexa-sdk';
 import {AlexaController} from './controllers/alexaController';
-import {AmazonController} from "./controllers/amazonController";
+import {AmazonController} from './controllers/amazonController';
 
-const handler = function (event: Alexa.RequestBody<Alexa.Request>, context: Alexa.Context): void {
+export const handler = function (event: Alexa.RequestBody<Alexa.Request>, context: Alexa.Context): void {
     const alexa = Alexa.handler(event, context);
     alexa.registerHandlers({
         'NewSession': function () {
@@ -13,6 +13,15 @@ const handler = function (event: Alexa.RequestBody<Alexa.Request>, context: Alex
         },
         'PreviousRecord': function () {
             new AlexaController(this).previousRecord();
+        },
+        'GetName': function () {
+            new AlexaController(this).getName();
+        },
+        'GetBirthday': function () {
+            new AlexaController(this).getBirthday();
+        },
+        'BloodPressure': function () {
+            new AlexaController(this).getBloodPressure();
         },
         'AMAZON.HelpIntent': function () {
             new AmazonController(this).help();
@@ -27,4 +36,5 @@ const handler = function (event: Alexa.RequestBody<Alexa.Request>, context: Alex
             new AmazonController(this).unhandled();
         }
     });
-}; 
+    alexa.execute();
+};

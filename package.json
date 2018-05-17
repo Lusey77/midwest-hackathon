@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "alexa-sdk": "^1.0.4",
-    "aws-sdk": "^2.7.21",
+    "aws-sdk": "^2.241.1",
     "bespoken-tools": "1.2.8",
     "dotenv": "^5.0.1",
     "es6-promise": "^4.0.5",

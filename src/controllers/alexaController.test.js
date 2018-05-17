@@ -5,6 +5,7 @@ const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 const testing_1 = require("../testing");
 const alexaController_1 = require("./alexaController");
+const ssml_helpers_1 = require("./ssml.helpers");
 chai.use(sinonChai);
 let expect = chai.expect;
 let mockHandler;
@@ -42,16 +43,16 @@ describe('Alexa Controller', () => {
             };
             const event = {
                 version: '1',
-                session: null,
+                session: undefined,
                 request: request,
-                context: null
+                context: undefined
             };
             mockHandler.setEvent(event);
             alexaController = new alexaController_1.AlexaController(mockHandler);
             mockHandler.attributes['recording'] = 'previous record';
             alexaController.record();
             expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':ask', 'You recorded: previous record<break time="0.3s"/> If you would like to record something else, just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just record?', 'Just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?');
+            expect(emitStub).to.have.been.calledWith(':ask', `You recorded: previous record ${ssml_helpers_1.pause} If you would like to record something else, just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?`, `Just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?`);
         });
     });
     describe('Previous Record', () => {
@@ -74,7 +75,7 @@ describe('Alexa Controller', () => {
                 mockHandler.attributes['recording'] = 'previous record';
                 alexaController.previousRecord();
                 expect(emitStub).to.have.been.calledOnce;
-                expect(emitStub).to.have.been.calledWith(':ask', '<say-as interpret-as="interjection">all righty!</say-as> You previously recorded the following: previous record <break time="0.3s"/> If you would like to record something eles, just say record this followed by what ever you would like to record.');
+                expect(emitStub).to.have.been.calledWith(':ask', `${ssml_helpers_1.interjection('all righty!')} You previously recorded the following: previous record ${ssml_helpers_1.pause} If you would like to record something else, just say record this followed by what ever you would like to record.`);
             });
         });
     });

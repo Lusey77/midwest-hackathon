@@ -15,7 +15,7 @@ class AmazonController extends intentController_1.IntentController {
         this.handler.emit(':tell', 'Stopping ok');
     }
     unhandled() {
-        this.handler.emit(':ask', 'I am sorry, but  do not know how to handle your request. If you would like to record, just say record this followed by what ever you would like to record.');
+        this.handler.emit(':ask', 'I am sorry, but do not know how to handle your request. If you would like to record, just say record this followed by what ever you would like to record.');
     }
 }
 exports.AmazonController = AmazonController;
