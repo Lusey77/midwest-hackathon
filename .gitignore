@@ -16,6 +16,8 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+
+#editors
 .idea/*
 
 # nyc test coverage
@@ -60,3 +62,4 @@ typings/
 
 # coveralls
 .coveralls.yml
+
