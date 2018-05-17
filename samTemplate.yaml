@@ -30,9 +30,6 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Handler: "index.handler"
-      Role:
-        Fn::GetAtt:
-          - "LambdaExecutionRole"
-          - "Arn"
+      Role: "arn:aws:iam::410717277537:role/LambdaExecutionRole"
       Code: ./
       Runtime: "nodejs6.10"
