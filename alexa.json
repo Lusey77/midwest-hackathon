@@ -62,6 +62,29 @@
                         "The blood pressure is {systolic} over {diastolic}",
                         "{systolic} over {diastolic}"
                     ]
+                },
+                {
+                    "name": "TakeNote",
+                    "slots": [
+                        {
+                            "name": "note",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "make a note {note}",
+                        "add record {note}",
+                        "take record {note}",
+                        "add a record {note}",
+                        "add a comment {note}",
+                        "take a note {note}",
+                        "add a note {note}",
+                        "make note {note}",
+                        "record {note}",
+                        "add comment {note}",
+                        "add note {note}",
+                        "take note {note}"
+                    ]
                 }
             ],
             "types": []

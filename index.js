@@ -3,11 +3,6 @@
 let Alexa = require('alexa-sdk');
 let AWS = require('aws-sdk');
 
-// AWS.config.update({
-//   region: "us-east-1"
-// });
-
-//I'v gotta ask scott for help tomorrow. I'm sorry.
 let dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
 exports.handler =  function (event, context) {
@@ -18,14 +13,15 @@ exports.handler =  function (event, context) {
         },
         'GetName': function () {
             let intent = this;
-            intent.attributes['patient_id'] = (event.request.intent.slots.PatientId.value);
-            let patient_id = intent.attributes['patient_id'];
+            this.attributes['physician_id'] = (1928374650).toString();
+            this.attributes['patient_id'] = (event.request.intent.slots.PatientId.value).toString();
+            let patient_id = this.attributes['patient_id'];
             console.log("patient_id: " + patient_id );
 
             var params = {
                 TableName: 'Patients',
                 Key: {
-                    'PatientId' : {S: intent.attributes['patient_id']},
+                    'PatientId' : {S: this.attributes['patient_id']},
                 },
             };
             console.log("TableName: " + params.TableName);
@@ -34,40 +30,42 @@ exports.handler =  function (event, context) {
             dynamodb.getItem(params, function(err, data) {
                 console.log("inside query");
                 if (err){
-                    console.log("error occured")
+                    console.log("error occured");
                     console.log(err, err.stack); // an error occurred
-                    intent.emit(':tell', 'There was an error inside the query.')
+                    intent.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
                 }
+                console.log(data);
                 console.log('Query successful');           // successful response
-
                 intent.attributes['first_name'] = data.Item.FirstName.S;
+                console.log("Name was set correctly");
                 intent.attributes['last_name'] = data.Item.LastName.S;
                 intent.attributes['date_of_birth'] = data.Item.DateOfBirth.S;
+                // this.attributes['all_db_info'] = data.Item;
 
-            const FirstName = intent.attributes['first_name'];
-            const LastName = intent.attributes['last_name'];
-            const DateOfBirth = intent.attributes['date_of_birth'];
+                let FirstName = intent.attributes['first_name'];
+                let LastName = intent.attributes['last_name'];
+                let DateOfBirth = intent.attributes['date_of_birth'];
+                console.log("Patient Name: " + FirstName + '' + LastName);
+                var speechOutput = '<break time="0.3s"/> Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>';
 
-            console.log("Patient Name: " + FirstName + '' + LastName);
-            var speechOutput = '<break time="0.3s"/> Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>';
+                intent.emit(':ask',"Starting session for patient : "+ FirstName + ' ' + LastName + speechOutput, '');
 
-            intent.emit(':ask',"Starting session for patient : "+ FirstName + ' ' + LastName + speechOutput, '');
             });
         },
         'GetBirthday': function(){
             let intent = this;
-            intent.attributes['patient_stated_dob'] = event.request.intent.slots.birthday.value;
-            console.log(intent.attributes['patient_stated_dob']); //Has to be this in the database to work "1991-07-26"
-            if (intent.attributes['first_name'] == undefined){
+            this.attributes['patient_stated_dob'] = event.request.intent.slots.birthday.value;
+            console.log(this.attributes['patient_stated_dob']); //Has to be this in the database to work "1991-07-26"
+            if (this.attributes['first_name'] == undefined){
                 console.log('Patient name has not been set.');
                 intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.', '');
             }else{
                 const pause = '<break time="0.3s"/>';
-                console.log("Getting patient's birthday.")
-                if (intent.attributes['patient_stated_dob'] != intent.attributes['date_of_birth']){
+                console.log("Getting patient's birthday.");
+                if (this.attributes['patient_stated_dob'] != this.attributes['date_of_birth']){
                     intent.emit(':ask', 'The birthday that you gave does not match what is stated in the database. Please verify the birthday again or select a different patient.');
                 }else{
-                    intent.emit(':ask', 'We will now start entering information for' + intent.attributes['first_name'] + pause + ' born on ' + intent.attributes['date_of_birth'] + pause + '. Please give the systolic and diastolic measurements for '+ intent.attributes['first_name'] + pause + ' Please say the systolic measurement over the diastolic measurement', '');
+                    intent.emit(':ask', 'We will now start entering information for' + this.attributes['first_name'] + pause + ' born on ' + this.attributes['date_of_birth'] + pause + '. to record a note say take note, record note, or make note followed by the note that you would like to record.', '');
                 }
             }
         },
@@ -75,13 +73,57 @@ exports.handler =  function (event, context) {
             let intent = this;
             let systolic = event.request.intent.slots.systolic.value;
             let diastolic = event.request.intent.slots.diastolic.value;
-            if ((intent.attributes['first_name'] == undefined) && (intent.attributes['date_of_birth'] == undefined)){
-                intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.')
+            if ((this.attributes['first_name'] == undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
             }
-            else if ((intent.attributes['first_name'] != undefined) && (intent.attributes['date_of_birth'] == undefined)){
-                intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>')
+            else if ((this.attributes['first_name'] != undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>');
             }else{
-                intent.emit(':ask', '' + intent.attributes['first_name'] + "'s blood pressure is " + systolic + ' over ' + diastolic, '')
+                intent.emit(':ask', '' + this.attributes['first_name'] + "'s blood pressure is " + systolic + ' over ' + diastolic, '');
+            }
+        },
+        'TakeNote': function(){
+            let intent = this;
+            this.attributes['current_date'] = new Date();
+            if ((this.attributes['first_name'] == undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+            }
+            else if ((this.attributes['first_name'] != undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>');
+            }
+            else{
+                let note_to_add = event.request.intent.slots.note.value;
+                const pause = '<break time="0.3s"/>';
+                var params = {
+                    TableName: 'Patients',
+                    Item:  {
+                        "PatientId": {S: intent.attributes['patient_id']}, 
+                        "FirstName": {S: intent.attributes['first_name']},
+                        "LastName": {S: intent.attributes['last_name']},
+                        "DateOfBirth": {S: intent.attributes['date_of_birth']},
+                        "Note": {SS: [
+                            intent.attributes['current_date'].toString(),
+                            intent.attributes['physician_id'],
+                            note_to_add
+                            ]
+
+                        }
+                    },
+                };
+
+                dynamodb.putItem(params, function(err, data) {
+                    console.log("Inside the query");
+                    if (err){
+                        console.log("error in put item");
+                        console.log(err, err.stack); // an error occurred
+                    }else{
+                        console.log("successfully put items");
+                        console.log(data);           // successful response
+                        intent.emit(':ask', 'You recorded' + note_to_add + pause +'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record.','')
+                    }
+
+                });
+
             }
         },
         'AMAZON.HelpIntent': function () {
