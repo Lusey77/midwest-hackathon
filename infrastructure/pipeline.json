@@ -1,0 +1,144 @@
+{
+    "pipeline": {
+        "name": "Midwest-Hackathon-Pipeline",
+        "roleArn": "arn:aws:iam::410717277537:role/AWS-CodePipeline-Service",
+        "artifactStore": {
+            "type": "S3",
+            "location": "codepipeline-us-east-1-285665459630"
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "ThirdParty",
+                            "provider": "GitHub",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "Branch": "master",
+                            "OAuthToken": "****",
+                            "Owner": "Lusey77",
+                            "PollForSourceChanges": "false",
+                            "Repo": "midwest-hackathon"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "MyApp"
+                            }
+                        ],
+                        "inputArtifacts": []
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "name": "CodeBuild",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "provider": "CodeBuild",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ProjectName": "Midwest-Hackathon-Code-Build"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ],
+                        "inputArtifacts": [
+                            {
+                                "name": "MyApp"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Approval",
+                "actions": [
+                    {
+                        "name": "Deploy_Approval",
+                        "actionTypeId": {
+                            "category": "Approval",
+                            "owner": "AWS",
+                            "provider": "Manual",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "NotificationArn": "arn:aws:sns:us-east-1:410717277537:CodeCommitBuildApproval"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": []
+                    }
+                ]
+            },
+            {
+                "name": "Staging",
+                "actions": [
+                    {
+                        "name": "MakeChangeRequest",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CloudFormation",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ActionMode": "CHANGE_SET_REPLACE",
+                            "Capabilities": "CAPABILITY_IAM",
+                            "ChangeSetName": "MyChangeSet",
+                            "RoleArn": "arn:aws:iam::410717277537:role/CloudFormation-Lambda-Execution-Role",
+                            "StackName": "MyBetaStack",
+                            "TemplatePath": "MyAppBuild::outputSamTemplate.yaml"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "MyBetaStack",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CloudFormation",
+                            "version": "1"
+                        },
+                        "runOrder": 2,
+                        "configuration": {
+                            "ActionMode": "CHANGE_SET_EXECUTE",
+                            "ChangeSetName": "MyChangeSet",
+                            "StackName": "MyBetaStack"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "version": 26
+    },
+    "metadata": {
+        "pipelineArn": "arn:aws:codepipeline:us-east-1:410717277537:Midwest-Hackathon-Pipeline",
+        "created": 1526147952.77,
+        "updated": 1526334567.803
+    }
+}
