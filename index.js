@@ -7,4 +7,4 @@ var bst = require('bespoken-tools');
 
 // Export the handler for the lambda, wrapping the call in Logless to
 // capture all the requests and responses
-exports.handler = bst.Logless.capture(process.env.BST_SECRET_KEY, handler);
+exports.handler = bst.Logless.capture("d849ab1c-85c1-459a-af4c-1e4da77124ba", handler);
