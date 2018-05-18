@@ -40,7 +40,7 @@ export class AlexaController extends IntentController {
         this.handler.attributes['physician_id'] = (1928374650).toString();
         this.handler.attributes['patient_id'] = (request.intent.slots.PatientId.value);
 
-        let params = {
+        const params = {
             TableName: 'Patients',
             Key: {
                 'PatientId': {S: this.handler.attributes['patient_id']},
@@ -59,7 +59,7 @@ export class AlexaController extends IntentController {
             const firstName = this.handler.attributes['first_name'];
             const lastName = this.handler.attributes['last_name'];
 
-            let speechOutput = `${pause} Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`;
+            const speechOutput = `${pause} Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`;
 
             this.handler.emit(':ask', `Starting session for patient: ${firstName} ${lastName} ${speechOutput}`, ``);
         });
@@ -82,15 +82,15 @@ export class AlexaController extends IntentController {
     getBloodPressure() {
         const request: IntentRequest = this.handler.event.request;
 
-        let systolic = request.intent.slots.systolic.value;
-        let diastolic = request.intent.slots.diastolic.value;
+        const systolic = request.intent.slots.systolic.value;
+        const diastolic = request.intent.slots.diastolic.value;
 
         if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
             this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
         } else if (this.handler.attributes['first_name'] !== undefined && this.handler.attributes['date_of_birth'] === undefined) {
             this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
         } else {
-            this.handler.emit(':ask', '' + this.handler.attributes['first_name'] + "'s blood pressure is " + systolic + ' over ' + diastolic, '');
+            this.handler.emit(':ask', `${this.handler.attributes['first_name']}'s blood pressure is ${systolic} over ${diastolic}`, '');
         }
     }
 
@@ -104,7 +104,7 @@ export class AlexaController extends IntentController {
         } else if (this.handler.attributes['first_name'] !== undefined && this.handler.attributes['date_of_birth'] === undefined) {
             this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
         } else {
-            const note_to_add = request.intent.slots.note.value;
+            const noteToAdd = request.intent.slots.note.value;
             const params = {
                 TableName: 'Patients',
                 Item: {
@@ -116,17 +116,49 @@ export class AlexaController extends IntentController {
                         SS: [
                             this.handler.attributes['current_date'].toString(),
                             this.handler.attributes['physician_id'],
-                            note_to_add
+                            noteToAdd
                         ]
                     }
                 },
             };
             this._dynamodb.putItem(params, function (err) {
                 if (err) {
-                    //TODO: Emit event
+                    // TODO: Emit event
                 } else {
-                    this.handler.emit(':ask', 'You recorded' + note_to_add + pause + 'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record.', '');
+                    this.handler.emit(':ask', `You recorded ${noteToAdd} ${pause} The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record. If you would like to retrieve the last note that you recorded just say get last note`, '');
                 }
+            });
+        }
+    }
+
+    getLastNote() {
+        if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
+            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+        } else if ((this.handler.attributes['first_name'] !== undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
+            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the patients birthday like this, ${date(19910726)}`);
+        } else {
+            const params = {
+                TableName: 'Patients',
+                Key: {
+                    'PatientId' : {S: this.handler.attributes['patient_id']},
+                },
+            };
+
+            this._dynamodb.getItem(params, function(err, data) {
+                if (err) {
+                    this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
+                }
+
+                this.handler.attributes['first_name'] = data.Item.FirstName.S;
+                this.handler.attributes['last_name'] = data.Item.LastName.S;
+                this.handler.attributes['last_note_info'] = data.Item.Note.L[data.Item.Note.L.length - 1];
+
+                const firstName = this.handler.attributes['first_name'];
+                const lastName = this.handler.attributes['last_name'];
+                const speechOutput = `${pause} was ${this.handler.attributes['last_note_info'].M.NoteAdded.S} on ${this.handler.attributes['last_note_info'].M.Date.S}`;
+
+                this.handler.emit(':ask', `The last note added for ${firstName} ${lastName} ${speechOutput}`, '');
+
             });
         }
     }
