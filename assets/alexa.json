@@ -1,0 +1,114 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "scribe",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "GetName",
+          "slots": [
+            {
+              "name": "PatientId",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "patient {PatientId}",
+            "the patient id is {PatientId}",
+            "patient i.d. {PatientId}",
+            "patient i. d. {PatientId}",
+            "patient id is {PatientId}",
+            "id {PatientId}",
+            "patient id {PatientId}"
+          ]
+        },
+        {
+          "name": "GetBirthday",
+          "slots": [
+            {
+              "name": "birthday",
+              "type": "AMAZON.DATE"
+            }
+          ],
+          "samples": [
+            "{birthday}"
+          ]
+        },
+        {
+          "name": "BloodPressure",
+          "slots": [
+            {
+              "name": "systolic",
+              "type": "AMAZON.NUMBER"
+            },
+            {
+              "name": "diastolic",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "blood pressure is {systolic} over {diastolic}",
+            "The blood pressure is {systolic} over {diastolic}",
+            "{systolic} over {diastolic}"
+          ]
+        },
+        {
+          "name": "TakeNote",
+          "slots": [
+            {
+              "name": "note",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "make a note {note}",
+            "add record {note}",
+            "take record {note}",
+            "add a record {note}",
+            "add a comment {note}",
+            "take a note {note}",
+            "add a note {note}",
+            "make note {note}",
+            "record {note}",
+            "add comment {note}",
+            "add note {note}",
+            "take note {note}"
+          ]
+        },
+        {
+          "name": "GetLastNote",
+          "slots": [],
+          "samples": [
+            "get the last note",
+            "what was the last note",
+            "tell me the last note",
+            "what is the last note",
+            "give me the last note",
+            "what was the last note recorded",
+            "what is the last note recorded",
+            "get the last note recorded",
+            "get the last note in the system",
+            "what is the last note in the system",
+            "what is the systems last note recorded",
+            "get the last note recorded in the system",
+            "give me the last note in the system",
+            "give me the last note recorded",
+            "give me the last note recorded in the system"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}
