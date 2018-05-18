@@ -49,7 +49,7 @@ export class AlexaController extends IntentController {
 
         this._dynamodb.getItem(params, function (err, data) {
             if (err) {
-                 this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
+                this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
             }
 
             this.handler.attributes['first_name'] = data.Item.FirstName.S;
@@ -105,6 +105,9 @@ export class AlexaController extends IntentController {
             this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
         } else {
             const noteToAdd = request.intent.slots.note.value;
+
+            const date = this.handler.attributes['current_date'].toString().slice(0, -24);
+
             const params = {
                 TableName: 'Patients',
                 Item: {
@@ -113,12 +116,17 @@ export class AlexaController extends IntentController {
                     'LastName': {S: this.handler.attributes['last_name']},
                     'DateOfBirth': {S: this.handler.attributes['date_of_birth']},
                     'Note': {
-                        SS: [
-                            this.handler.attributes['current_date'].toString(),
-                            this.handler.attributes['physician_id'],
-                            noteToAdd
+                        L: [
+                            {
+                                M: {
+                                    'Date': {'S': this.handler.attributes['current_date'].toString()},
+                                    'PhysicianId': {'S': this.handler.attributes['physician_id']},
+                                    'NoteAdded': {'S': noteToAdd},
+                                }
+                            }
                         ]
                     }
+
                 },
             };
             this._dynamodb.putItem(params, function (err) {
