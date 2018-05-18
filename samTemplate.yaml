@@ -11,6 +11,17 @@ Resources:
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill
+
+      AutoPublishAlias: live
+
+      DeploymentPreference:
+        Type: Linear10PercentEvery1Minute
+        Alarms:
+          # Add alarms here later
+        Hooks:
+          # Run before and after traffic shift
+          # PreTraffic:
+          # PostTraffic:
   DDBTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
@@ -26,10 +37,3 @@ Resources:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
       TableName: "Patients"
-  Test:
-    Type: "AWS::Lambda::Function"
-    Properties:
-      Handler: "index.handler"
-      Role: "arn:aws:iam::410717277537:role/LambdaExecutionRole"
-      Code: ./
-      Runtime: "nodejs6.10"
