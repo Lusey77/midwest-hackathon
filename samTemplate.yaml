@@ -8,14 +8,14 @@ Resources:
       Handler: index.handler
       Runtime: nodejs6.10
       CodeUri: ./
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Type: Linear10PercentEvery1Minute
-        Alarms:
-          # Add alarms here later
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill
+      AutoPublishAlias: live
+      # DeploymentPreference:
+      #   Type: Linear10PercentEvery1Minute
+      #   Alarms:
+          # Add alarms here later
   DDBTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
