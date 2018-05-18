@@ -8,6 +8,11 @@ Resources:
       Handler: index.handler
       Runtime: nodejs6.10
       CodeUri: ./
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: Linear10PercentEvery1Minute
+        Alarms:
+          # Add alarms here later
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill
@@ -26,10 +31,3 @@ Resources:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
       TableName: "Patients"
-  Test:
-    Type: "AWS::Lambda::Function"
-    Properties:
-      Handler: "index.handler"
-      Role: "arn:aws:iam::410717277537:role/LambdaExecutionRole"
-      Code: ./
-      Runtime: "nodejs6.10"
