@@ -26,6 +26,9 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
         'TakeNote': function () {
             new AlexaController(this).takeNote();
         },
+        'GetLastNote': function () {
+            new AlexaController(this).getLastNote();
+        },
         'AMAZON.HelpIntent': function () {
             new AmazonController(this).help();
         },
