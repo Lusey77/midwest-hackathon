@@ -7,10 +7,6 @@ phases:
       - echo Creating deploy package
       - aws cloudformation package --template-file samTemplate.yaml --s3-bucket midwest-hackathon
                                    --output-template-file outputSamTemplate.yaml
-  pre_build:
-    commands:
-      - echo Installing source NPM dependencies
-      - npm install
   build:
     commands:
       - echo Running tests
