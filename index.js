@@ -102,7 +102,7 @@ exports.handler =  function (event, context) {
 
 
                 let noteImput =  [{M: {
-                    "Date": {"S": intent.attributes['current_date'].toString()},
+                    "Date": {"S": date},
                     "PhysicianId": {"S": intent.attributes['physician_id']},
                     "NoteAdded": {"S": note_to_add},
                     }
@@ -180,51 +180,59 @@ exports.handler =  function (event, context) {
                 });
             }
         },
-        // "DeleteLastNote": function(){
-        //     let intent = this;
+        'RerecordNote': function(){
+            let intent = this;
+            this.attributes['current_date'] = new Date();
+            if ((this.attributes['first_name'] == undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+            }
+            else if ((this.attributes['first_name'] != undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19890726</say-as>');
+            }
+            else{
+                let note_to_add = event.request.intent.slots.query.value;
+                const pause = '<break time="0.3s"/>';
+                let date = intent.attributes['current_date'].toString().slice(0, -24);
 
-        //     if ((this.attributes['first_name'] == undefined) && (this.attributes['date_of_birth'] == undefined)){
-        //         intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        //     }
-        //     else if ((this.attributes['first_name'] != undefined) && (this.attributes['date_of_birth'] == undefined)){
-        //         intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>');
-        //     }
-        //     else{
+                let notes = this.attributes['all_db_info'].Note.L;
+                notes.pop()
 
-        //         let notes = this.attributes['all_db_info'].Note.L[0];
+                let noteImput =  [{M: {
+                    "Date": {"S": date},
+                    "PhysicianId": {"S": intent.attributes['physician_id']},
+                    "NoteAdded": {"S": note_to_add},
+                    }
+                }]
+                notes.push(noteImput[0]);
 
-        //         let noteList = [];
-        //         for (let note in notes){
-        //             noteList.push(note)
-        //         }
-        //         noteList.pop()
+                console.log(notes);
 
-        //         var params = {
-        //             TableName: 'Patients',
-        //             Item:  {
-        //                 "PatientId": {S: intent.attributes['patient_id']},
-        //                 "FirstName": {S: intent.attributes['first_name']},
-        //                 "LastName": {S: intent.attributes['last_name']},
-        //                 "DateOfBirth": {S: intent.attributes['date_of_birth']},
-        //                 "Note": {L: noteList}
-        //             },
-        //         };
+                var params = {
+                    TableName: 'Patients',
+                    Item:  {
+                        "PatientId": {S: intent.attributes['patient_id']},
+                        "FirstName": {S: intent.attributes['first_name']},
+                        "LastName": {S: intent.attributes['last_name']},
+                        "DateOfBirth": {S: intent.attributes['date_of_birth']},
+                        "Note": {L: notes}
+                    },
+                };
 
-        //         dynamodb.putItem(params, function(err, data) {
-        //             console.log("Inside the query");
-        //             if (err){
-        //                 console.log("error in put item");
-        //                 console.log(err, err.stack); // an error occurred
-        //             }else{
-        //                 console.log("successfully put items");
-        //                 console.log(data);           // successful response
-        //                 const pause = '<break time="0.3s"/>';
-        //                 intent.emit(':ask', 'You last note was successfully deleted.' + pause +'To record another note say take note, record note, or make note followed by the note that you would like to record. If you would like to retrieve the last note that you recorded just say get last note','')
-        //             }
+                dynamodb.putItem(params, function(err, data) {
+                    console.log("Inside the query");
+                    if (err){
+                        console.log("error in put item");
+                        console.log(err, err.stack); // an error occurred
+                    }else{
+                        console.log("successfully put items");
+                        console.log(data);           // successful response
+                        intent.emit(':ask', 'You re-recorded the note:' + note_to_add + pause +'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record. If you would like to retrieve the last note that you recorded just say get last note','')
+                    }
 
-        //         });
-        //     }
-        // },
+                });
+
+            }
+        },
         'AMAZON.HelpIntent': function () {
             this.emit(':tell', 'Hey yo, I\'m sorry, but you don\'t get no help. Sucka!');
         },

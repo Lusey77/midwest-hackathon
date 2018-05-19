@@ -106,6 +106,36 @@
                         "give me the last note recorded",
                         "give me the last note recorded in the system"
                     ]
+                },
+                {
+                    "name": "RerecordNote",
+                    "slots": [
+                        {
+                            "name": "query",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "That's not right. Record this instead. {query}",
+                        "That last note isn't right. Record this note instead {query}",
+                        "That wasn't right. Record {query}",
+                        "That last note wasn't right. Take note {query}",
+                        "That's not right. Take note {query}",
+                        "Oh shoot. I messed up recording that last note. Take note {query}",
+                        "Oh shoot. I messed up with that recording. Record note {query}",
+                        "I messed up recording. Record {query}",
+                        "There was a problem recording my last note record {query}",
+                        "There was a problem recording the last note. Record note {query}",
+                        "There was a problem taking the last note Record {query}",
+                        "There was a problem taking the last note. Record {query}",
+                        "There was a problem recording the last note Record note {query}",
+                        "There was a problem recording the last note. Record {query}",
+                        "There was a problem recording my last note. Record {query}",
+                        "I messed up taking the last note. Change my last note to {query}",
+                        "I messed up recording the last note. Change my note to {query}",
+                        "I messed up taking my last note. Change my note to {query}",
+                        "I messed up recording my last note. Change my note to {query}"
+                    ]
                 }
             ],
             "types": []
