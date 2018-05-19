@@ -11,7 +11,7 @@ phases:
       - npm run test
       - npm run ftest
       - echo Running build
-      - npm run build
+      - npm run build 
 artifacts:
   type: zip
   files:
