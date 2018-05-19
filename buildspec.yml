@@ -11,11 +11,9 @@ phases:
       - npm run test
       - npm run ftest
       - npm run build
-artifacts:
-  name: alexa-scribe
-  type: zip
-  files:
-    - dist/index.js
-    - dist/index.js.map
-    - node_modules
-    - package.json
+  post_build:
+    commands:
+      - echo Zipping files
+      - zip alexa-scribe dist/index.js dist/index.js.map node_modules/* index.js package.json
+      - echo Pushing code
+      - aws update-function-code --function-name arn:aws:lambda:us-east-1:410717277537:function:alexa-scribe-infrastructure-stack-AlexaSkill-12S4TMZGWQB37 --zip-file fileb://alexa-scribe.zip --s3-bucket midwest-hackathon
