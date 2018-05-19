@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Does Alexa shit
+Resources:
+  AlexaSkill:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: ./
+      Events:
+        AlexaSkillEvent:
+          Type: AlexaSkill
+  DDBTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "PatientId"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "PatientId"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+      TableName: "Patients"
