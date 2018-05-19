@@ -14,5 +14,7 @@ phases:
 artifacts:
   type: zip
   files:
-    - samTemplate.yaml
-    - outputSamTemplate.yaml
+    - dist/index.js
+    - dist/index.js.map
+    - node_modules
+    - package.json
