@@ -10,15 +10,13 @@ phases:
   pre_build:
     commands:
       - echo Installing source NPM dependencies
-      - npm install -g mocha
       - npm install
   build:
     commands:
       - echo Running tests
       - npm run test
       - npm run ftest
-      - echo Running build
-      - npm run build 
+      - npm run build
 artifacts:
   type: zip
   files:
