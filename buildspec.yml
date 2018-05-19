@@ -12,6 +12,7 @@ phases:
       - npm run ftest
       - npm run build
 artifacts:
+  name: alexa-scribe
   type: zip
   files:
     - dist/index.js
