@@ -12,6 +12,10 @@ phases:
       - npm run ftest
       - echo Running build
       - npm run build
+  post_build:
+    commands:
+      - echo Deploying code to S3
+      - aws update-function-code --function-name arn:aws:lambda:us-east-1:410717277537:function:alexa-scribe-infrastructure-stack-AlexaSkill-12S4TMZGWQB37 --zip-file alexa-scribe.zip --s3-bucket midwest-hackathon  
 artifacts:
   type: zip
   files:
