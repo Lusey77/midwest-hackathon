@@ -6,7 +6,7 @@ module.exports = {
     entry: "./src/index.ts",
     target: "node",
     output: {
-        path: __dirname,
+        path: path.join(__dirname, "dist"),
         filename: "index.js",
         libraryTarget: "umd",
         umdNamedDefine: true
