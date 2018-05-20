@@ -136,6 +136,39 @@
                         "I messed up taking my last note. Change my note to {query}",
                         "I messed up recording my last note. Change my note to {query}"
                     ]
+                },
+                {
+                    "name": "SetDiagnosis",
+                    "slots": [
+                        {
+                            "name": "diagnosis",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "give this diagnosis {diagnosis}",
+                        "set Diagnosis {diagnosis}",
+                        "give diagnosis {diagnosis}",
+                        "Record diagnosis {diagnosis}",
+                        "Add this diagnosis {diagnosis}",
+                        "Take diagnosis {diagnosis}",
+                        "Add the following diagnosis {diagnosis}",
+                        "Add diagnosis {diagnosis}"
+                    ]
+                },
+                {
+                    "name": "GetLastDiagnosis",
+                    "slots": [],
+                    "samples": [
+                        "get the last diagnosis from the system",
+                        "what is the last diagnosis in the system",
+                        "get last diagnosis in the system",
+                        "what is the last diagnosis recorded",
+                        "what is the last diagnosis entered",
+                        "get the last diagnosis entered",
+                        "get the last last diagnosis ",
+                        "get last diagnosis"
+                    ]
                 }
             ],
             "types": []
