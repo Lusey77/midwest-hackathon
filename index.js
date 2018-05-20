@@ -47,7 +47,7 @@ exports.handler =  function (event, context) {
                 let LastName = intent.attributes['last_name'];
                 let DateOfBirth = intent.attributes['date_of_birth'];
                 console.log("Patient Name: " + FirstName + '' + LastName);
-                var speechOutput = '<break time="0.3s"/> Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910615</say-as>';
+                var speechOutput = '<break time="0.3s"/> Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19890615</say-as>';
 
                 intent.emit(':ask',"Starting session for patient : "+ FirstName + ' ' + LastName + speechOutput, '');
 
@@ -98,7 +98,7 @@ exports.handler =  function (event, context) {
                 let date = intent.attributes['current_date'].toString().slice(0, -24);
 
                 let notes = this.attributes['all_db_info'].Note.L;
-
+                let diagnosis = this.attributes['all_db_info'].Diagnosis.L;
 
 
                 let noteImput =  [{M: {
@@ -118,7 +118,8 @@ exports.handler =  function (event, context) {
                         "FirstName": {S: intent.attributes['first_name']},
                         "LastName": {S: intent.attributes['last_name']},
                         "DateOfBirth": {S: intent.attributes['date_of_birth']},
-                        "Note": {L: notes}
+                        "Note": {L: notes},
+                        "Diagnosis": {L: diagnosis}
                     },
                 };
 
@@ -195,6 +196,7 @@ exports.handler =  function (event, context) {
                 let date = intent.attributes['current_date'].toString().slice(0, -24);
 
                 let notes = this.attributes['all_db_info'].Note.L;
+                let diagnosis = this.attributes['all_db_info'].Diagnosis.L;
                 notes.pop()
 
                 let noteImput =  [{M: {
@@ -214,7 +216,8 @@ exports.handler =  function (event, context) {
                         "FirstName": {S: intent.attributes['first_name']},
                         "LastName": {S: intent.attributes['last_name']},
                         "DateOfBirth": {S: intent.attributes['date_of_birth']},
-                        "Note": {L: notes}
+                        "Note": {L: notes},
+                        "Diagnosis": {L: diagnosis}
                     },
                 };
 
@@ -226,21 +229,119 @@ exports.handler =  function (event, context) {
                     }else{
                         console.log("successfully put items");
                         console.log(data);           // successful response
-                        intent.emit(':ask', 'You re-recorded the note:' + note_to_add + pause +'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record. If you would like to retrieve the last note that you recorded just say get last note','')
+                        intent.emit(':ask', 'You re-recorded the note:' + note_to_add + pause +'The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record. To retrieve the last note or diagnosis that you recorded just say get last note or get last diagnosis. To record a note say record note.','')
                     }
 
                 });
 
             }
         },
+         'SetDiagnosis': function(){
+            let intent = this;
+            this.attributes['current_date'] = new Date();
+            if ((this.attributes['first_name'] == undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+            }
+            else if ((this.attributes['first_name'] != undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19890726</say-as>');
+            }
+            else{
+                let diagnosis_to_add = event.request.intent.slots.diagnosis.value;
+                const pause = '<break time="0.3s"/>';
+                let date = intent.attributes['current_date'].toString().slice(0, -24);
+
+                let notes = this.attributes['all_db_info'].Note.L;
+                let diagnosisList = this.attributes['all_db_info'].Diagnosis.L;
+
+
+                let diagnosis =  [{M: {
+                    "Date": {"S": date},
+                    "PhysicianId": {"S": intent.attributes['physician_id']},
+                    "Diagnosis": {"S": diagnosis_to_add},
+                    }
+                }]
+                diagnosisList.push(diagnosis[0]);
+
+                console.log(diagnosisList);
+
+                var params = {
+                    TableName: 'Patients',
+                    Item:  {
+                        "PatientId": {S: intent.attributes['patient_id']},
+                        "FirstName": {S: intent.attributes['first_name']},
+                        "LastName": {S: intent.attributes['last_name']},
+                        "DateOfBirth": {S: intent.attributes['date_of_birth']},
+                        "Note": {L: notes},
+                        "Diagnosis": {L: diagnosisList}
+                    },
+                };
+
+                dynamodb.putItem(params, function(err, data) {
+                    console.log("Inside the query");
+                    if (err){
+                        console.log("error in put item");
+                        console.log(err, err.stack); // an error occurred
+                    }else{
+                        console.log("successfully put items");
+                        console.log(data);           // successful response
+                        intent.emit(':ask', 'The diagnosis recorded was' + diagnosis_to_add + pause +'The diagnosis was successfully recorded. To retrieve the last note or diagnosis that you recorded just say get last note or get last diagnosis. To record a note say record note.','')
+                    }
+
+                });
+
+            }
+        },
+        "GetLastDiagnosis": function(){
+            let intent = this;
+
+            if ((this.attributes['first_name'] == undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+            }
+            else if ((this.attributes['first_name'] != undefined) && (this.attributes['date_of_birth'] == undefined)){
+                intent.emit(':ask', 'You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, <say-as interpret-as="date">19910726</say-as>');
+            }
+            else{
+                var params = {
+                    TableName: 'Patients',
+                    Key: {
+                        'PatientId' : {S: this.attributes['patient_id']},
+                    },
+                };
+                console.log("TableName: " + params.TableName);
+                console.log("Key : " + params.Key.PatientId.S);
+
+                dynamodb.getItem(params, function(err, data) {
+                    console.log("inside query");
+                    if (err){
+                        console.log("error occured");
+                        console.log(err, err.stack); // an error occurred
+                        intent.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
+                    }
+                    console.log(data);
+                    console.log('Query successful');           // successful response
+                    intent.attributes['first_name'] = data.Item.FirstName.S;
+                    console.log("Name was set correctly");
+                    intent.attributes['last_name'] = data.Item.LastName.S;
+                    intent.attributes['last_diagnosis_info'] = data.Item.Diagnosis.L[data.Item.Note.L.length-1]
+                    const pause = '<break time="0.3s"/>';
+
+                    let FirstName = intent.attributes['first_name'];
+                    let LastName = intent.attributes['last_name'];
+                    var speechOutput = '<break time="0.3s"/> was ' + intent.attributes['last_diagnosis_info'].M.Diagnosis.S + pause +" on " + intent.attributes['last_diagnosis_info'].M.Date.S;
+
+                    intent.emit(':ask',"The last diagnosis added for "+ FirstName + ' ' + LastName + speechOutput, '');
+
+                });
+            }
+        },
         'AMAZON.HelpIntent': function () {
             this.emit(':tell', 'Hey yo, I\'m sorry, but you don\'t get no help. Sucka!');
         },
         'AMAZON.CancelIntent': function () {
-            this.emit(':tell', 'Cancelling ok');
+            this.emit(':tell', 'All information has been stored. The application is ending.');
         },
         'AMAZON.StopIntent': function () {
-            this.emit(':tell', 'Stopping ok');
+            this.emit(':tell', 'All information has been stored. Stopping now.');
         },
         'Unhandled': function() {
             this.emit(':ask', 'I am sorry, but  do not know how to handle your request. If you would like to record, just say record this followed by what ever you would like to record.');
