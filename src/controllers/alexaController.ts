@@ -59,7 +59,7 @@ export class AlexaController extends IntentController {
             const firstName = this.handler.attributes['first_name'];
             const lastName = this.handler.attributes['last_name'];
 
-            const speechOutput = `${pause} Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`;
+            const speechOutput = `${pause} Please verify the patient by stating the paytients birthday like this, ${date(19910615)}`;
 
             this.handler.emit(':ask', `Starting session for patient: ${firstName} ${lastName} ${speechOutput}`, ``);
         });
@@ -108,6 +108,17 @@ export class AlexaController extends IntentController {
 
             const date = this.handler.attributes['current_date'].toString().slice(0, -24);
 
+            let notes = this.handler.attributes['all_db_info'].Note.L;
+
+            let noteImput =  [{M: {
+                    'Date': {'S': this.handler.attributes['current_date'].toString()},
+                    'PhysicianId': {'S': this.handler.attributes['physician_id']},
+                    'NoteAdded': {'S': noteToAdd},
+                }
+            }];
+
+            notes.push(noteImput[0]);
+
             const params = {
                 TableName: 'Patients',
                 Item: {
@@ -115,18 +126,7 @@ export class AlexaController extends IntentController {
                     'FirstName': {S: this.handler.attributes['first_name']},
                     'LastName': {S: this.handler.attributes['last_name']},
                     'DateOfBirth': {S: this.handler.attributes['date_of_birth']},
-                    'Note': {
-                        L: [
-                            {
-                                M: {
-                                    'Date': {'S': this.handler.attributes['current_date'].toString()},
-                                    'PhysicianId': {'S': this.handler.attributes['physician_id']},
-                                    'NoteAdded': {'S': noteToAdd},
-                                }
-                            }
-                        ]
-                    }
-
+                    'Note': {L: notes}
                 },
             };
             this._dynamodb.putItem(params, function (err) {
@@ -163,7 +163,7 @@ export class AlexaController extends IntentController {
 
                 const firstName = this.handler.attributes['first_name'];
                 const lastName = this.handler.attributes['last_name'];
-                const speechOutput = `${pause} was ${this.handler.attributes['last_note_info'].M.NoteAdded.S} on ${this.handler.attributes['last_note_info'].M.Date.S}`;
+                const speechOutput = `${pause} was ${this.handler.attributes['last_note_info'].M.NoteAdded.S} ${pause} on ${this.handler.attributes['last_note_info'].M.Date.S}`;
 
                 this.handler.emit(':ask', `The last note added for ${firstName} ${lastName} ${speechOutput}`, '');
 
