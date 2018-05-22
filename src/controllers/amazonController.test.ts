@@ -32,7 +32,7 @@ describe('Amazon Controller', () => {
             alexaController.cancel();
 
             expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':tell', 'Cancelling ok');
+            expect(emitStub).to.have.been.calledWith(':tell', 'All information has been stored. The application is ending.');
         });
     });
 
@@ -44,7 +44,7 @@ describe('Amazon Controller', () => {
             alexaController.stop();
 
             expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':tell', 'Stopping ok');
+            expect(emitStub).to.have.been.calledWith(':tell', 'All information has been stored. Stopping now.');
         });
     });
 

@@ -8,12 +8,6 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
         'NewSession': function () {
             new AlexaController(this).newSession();
         },
-        'Record': function () {
-            new AlexaController(this).record();
-        },
-        'PreviousRecord': function () {
-            new AlexaController(this).previousRecord();
-        },
         'GetName': function () {
             new AlexaController(this).getName();
         },
@@ -31,6 +25,12 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
         },
         'RerecordNote': function () {
             new AlexaController(this).reRecordNote();
+        },
+        'SetDiagnosis': function () {
+            new AlexaController(this).setDiagnosis();
+        },
+        'GetLastDiagnosis': function () {
+            new AlexaController(this).getLastDiagnosis();
         },
         'AMAZON.HelpIntent': function () {
             new AmazonController(this).help();

@@ -22,78 +22,8 @@ describe('Alexa Controller', () => {
             alexaController.newSession();
 
             expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':ask', 'Welcome to this recording app. I can help you by recording your voice. I am ready to start recording at any time. Just say record this followed by what ever you would like to record.');
-        });
-    });
+            expect(emitStub).to.have.been.calledWith(':ask', 'Welcome to the medical recording app scribe. I will assist you in recording and accessing the details of your patient. Please start by saying Patient ID: followed by the identification number of the patient.');
 
-    describe('Record', () => {
-        it('should record and read back recording', () => {
-            mockHandler = new MockHandler();
-            emitStub = sinon.stub(mockHandler, 'emit');
-
-            const slots: Record<string, SlotValue> = {
-                'Query': {
-                    name: 'value',
-                    value: 'previous record'
-                }
-            };
-
-            const request: IntentRequest = {
-                type: 'IntentRequest',
-                requestId: '1',
-                timestamp: 'atimestamp',
-                intent: {
-                    name: 'Who knows',
-                    slots: slots
-                }
-            };
-
-            const event: RequestBody<IntentRequest> = {
-                version: '1',
-                session: undefined,
-                request: request,
-                context: undefined
-            };
-
-            mockHandler.setEvent(event);
-
-            alexaController = new AlexaController(mockHandler);
-
-            mockHandler.attributes['recording'] = 'previous record';
-            alexaController.record();
-
-            expect(emitStub).to.have.been.calledOnce;
-            expect(emitStub).to.have.been.calledWith(':ask', `You recorded: previous record ${pause} If you would like to record something else, just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?`, `Just say record this followed by what ever you would like to record, or listen to what you recorded by asking: What did i just re-cord?`);
-        });
-    });
-
-    describe('Previous Record', () => {
-        describe('When no previous record', () => {
-            it('returns a message saying no recordings exist', () => {
-                mockHandler = new MockHandler();
-                emitStub = sinon.stub(mockHandler, 'emit');
-                alexaController = new AlexaController(mockHandler);
-
-                mockHandler.attributes['recording'] = undefined;
-                alexaController.previousRecord();
-
-                expect(emitStub).to.have.been.calledOnce;
-                expect(emitStub).to.have.been.calledWith(':ask', 'You have not recorded anything during this session. If you would like to record something, just say record this followed by what ever you would like to record.', 'Just say record this followed by what ever you would like to record.');
-            });
-        });
-
-        describe('When previous record', () => {
-            it('returns a message saying with previous recording', () => {
-                mockHandler = new MockHandler();
-                emitStub = sinon.stub(mockHandler, 'emit');
-                alexaController = new AlexaController(mockHandler);
-
-                mockHandler.attributes['recording'] = 'previous record';
-                alexaController.previousRecord();
-
-                expect(emitStub).to.have.been.calledOnce;
-                expect(emitStub).to.have.been.calledWith(':ask', `${interjection('all righty!')} You previously recorded the following: previous record ${pause} If you would like to record something else, just say record this followed by what ever you would like to record.`);
-            });
         });
     });
 });
