@@ -8,12 +8,6 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
         'NewSession': function () {
             new AlexaController(this).newSession();
         },
-        'Record': function () {
-            new AlexaController(this).record();
-        },
-        'PreviousRecord': function () {
-            new AlexaController(this).previousRecord();
-        },
         'GetName': function () {
             new AlexaController(this).getName();
         },
