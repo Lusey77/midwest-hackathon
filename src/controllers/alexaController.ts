@@ -47,7 +47,7 @@ export class AlexaController extends IntentController {
             },
         };
 
-        this._dynamodb.getItem(params, function (err, data) {
+        this._dynamodb.getItem(params, (err, data) => {
             if (err) {
                 this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
             }
@@ -108,16 +108,17 @@ export class AlexaController extends IntentController {
 
             const date = this.handler.attributes['current_date'].toString().slice(0, -24);
 
-            let notes = this.handler.attributes['all_db_info'].Note.L;
+            const notes = this.handler.attributes['all_db_info'].Note.L;
 
-            let noteImput =  [{M: {
-                    'Date': {'S': this.handler.attributes['current_date'].toString()},
+            const noteInput = [{
+                M: {
+                    'Date': {'S': date},
                     'PhysicianId': {'S': this.handler.attributes['physician_id']},
                     'NoteAdded': {'S': noteToAdd},
                 }
             }];
 
-            notes.push(noteImput[0]);
+            notes.push(noteInput[0]);
 
             const params = {
                 TableName: 'Patients',
@@ -129,7 +130,7 @@ export class AlexaController extends IntentController {
                     'Note': {L: notes}
                 },
             };
-            this._dynamodb.putItem(params, function (err) {
+            this._dynamodb.putItem(params, (err) => {
                 if (err) {
                     // TODO: Emit event
                 } else {
@@ -148,11 +149,11 @@ export class AlexaController extends IntentController {
             const params = {
                 TableName: 'Patients',
                 Key: {
-                    'PatientId' : {S: this.handler.attributes['patient_id']},
+                    'PatientId': {S: this.handler.attributes['patient_id']},
                 },
             };
 
-            this._dynamodb.getItem(params, function(err, data) {
+            this._dynamodb.getItem(params, (err, data) => {
                 if (err) {
                     this.handler.emit(':ask', 'I did not find the patient in the database. Please state the patient id again by saying patient ID followed by the identification number of the patient.');
                 }
@@ -168,6 +169,58 @@ export class AlexaController extends IntentController {
                 this.handler.emit(':ask', `The last note added for ${firstName} ${lastName} ${speechOutput}`, '');
 
             });
+        }
+    }
+
+    reRecordNote() {
+        const request: IntentRequest = this.handler.event.request;
+
+        this.handler.attributes['current_date'] = new Date();
+
+        if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
+            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+        } else if ((this.handler.attributes['first_name'] !== undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
+            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the patients birthday like this, ${date(19890726)}`);
+        } else {
+            const noteToAdd = request.intent.slots.query.value;
+
+            const date = this.handler.attributes['current_date'].toString().slice(0, -24);
+
+            const notes = this.handler.attributes['all_db_info'].Note.L;
+
+            notes.pop();
+
+            const noteInput = [{
+                M: {
+                    'Date': {'S': date},
+                    'PhysicianId': {'S': this.handler.attributes['physician_id']},
+                    'NoteAdded': {'S': noteToAdd},
+                }
+            }];
+
+            notes.push(noteInput[0]);
+
+            let params = {
+                TableName: 'Patients',
+                Item: {
+                    'PatientId': {S: this.handler.attributes['patient_id']},
+                    'FirstName': {S: this.handler.attributes['first_name']},
+                    'LastName': {S: this.handler.attributes['last_name']},
+                    'DateOfBirth': {S: this.handler.attributes['date_of_birth']},
+                    'Note': {L: notes}
+                },
+            };
+
+            this._dynamodb.putItem(params, (err) => {
+                console.log('Inside the query');
+                if (err) {
+
+                } else {
+                    this.handler.emit(':ask', `You re-recorded the note: ${noteToAdd} ${pause} The note was successfully recorded. To record another note say take note, record note, or make note followed by the note that you would like to record. If you would like to retrieve the last note that you recorded just say get last note`, '');
+                }
+
+            });
+
         }
     }
 }
