@@ -11,12 +11,12 @@ export class AmazonController extends IntentController {
     }
 
     cancel() {
-        this.handler.emit(':tell', 'Cancelling ok');
+        this.handler.emit(':tell', 'All information has been stored. The application is ending.');
     }
 
 
     stop() {
-        this.handler.emit(':tell', 'Stopping ok');
+        this.handler.emit(':tell', 'All information has been stored. Stopping now.');
     }
 
     unhandled() {
