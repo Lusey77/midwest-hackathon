@@ -16,4 +16,4 @@ phases:
       - echo Zipping files
       - zip alexa-scribe dist/index.js dist/index.js.map node_modules/* index.js package.json
       - echo Pushing code
-      - aws lambda update-function-code --function-name arn:aws:lambda:us-east-1:410717277537:function:alexa-scribe-infrastructure-stack-AlexaSkill-AJE25S0ZKGZU --zip-file fileb://alexa-scribe.zip
+      - aws lambda update-function-code --function-name arn:aws:lambda:us-east-1:410717277537:function:alexa-scribe-infrastructure-stack-AlexaSkill-1E67W1SUC8VZ0 --zip-file fileb://alexa-scribe.zip
