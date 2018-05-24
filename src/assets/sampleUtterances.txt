@@ -1,0 +1,73 @@
+GetName patient {PatientId}
+GetName the patient id is {PatientId}
+GetName patient i.d. {PatientId}
+GetName patient i. d. {PatientId}
+GetName patient id is {PatientId}
+GetName id {PatientId}
+GetName patient id {PatientId}
+GetBirthday {birthday}
+BloodPressure blood pressure is {systolic} over {diastolic}
+BloodPressure The blood pressure is {systolic} over {diastolic}
+BloodPressure {systolic} over {diastolic}
+TakeNote make a note {note}
+TakeNote add record {note}
+TakeNote take record {note}
+TakeNote add a record {note}
+TakeNote add a comment {note}
+TakeNote take a note {note}
+TakeNote add a note {note}
+TakeNote make note {note}
+TakeNote record {note}
+TakeNote add comment {note}
+TakeNote add note {note}
+TakeNote take note {note}
+GetLastNote get the last note
+GetLastNote what was the last note
+GetLastNote tell me the last note
+GetLastNote what is the last note
+GetLastNote give me the last note
+GetLastNote what was the last note recorded
+GetLastNote what is the last note recorded
+GetLastNote get the last note recorded
+GetLastNote get the last note in the system
+GetLastNote what is the last note in the system
+GetLastNote what is the systems last note recorded
+GetLastNote get the last note recorded in the system
+GetLastNote give me the last note in the system
+GetLastNote give me the last note recorded
+GetLastNote give me the last note recorded in the system
+RerecordNote That's not right. Record this instead. {query}
+RerecordNote That last note isn't right. Record this note instead {query}
+RerecordNote That wasn't right. Record {query}
+RerecordNote That last note wasn't right. Take note {query}
+RerecordNote That's not right. Take note {query}
+RerecordNote Oh shoot. I messed up recording that last note. Take note {query}
+RerecordNote Oh shoot. I messed up with that recording. Record note {query}
+RerecordNote I messed up recording. Record {query}
+RerecordNote There was a problem recording my last note record {query}
+RerecordNote There was a problem recording the last note. Record note {query}
+RerecordNote There was a problem taking the last note Record {query}
+RerecordNote There was a problem taking the last note. Record {query}
+RerecordNote There was a problem recording the last note Record note {query}
+RerecordNote There was a problem recording the last note. Record {query}
+RerecordNote There was a problem recording my last note. Record {query}
+RerecordNote I messed up taking the last note. Change my last note to {query}
+RerecordNote I messed up recording the last note. Change my note to {query}
+RerecordNote I messed up taking my last note. Change my note to {query}
+RerecordNote I messed up recording my last note. Change my note to {query}
+SetDiagnosis give this diagnosis {diagnosis}
+SetDiagnosis set Diagnosis {diagnosis}
+SetDiagnosis give diagnosis {diagnosis}
+SetDiagnosis Record diagnosis {diagnosis}
+SetDiagnosis Add this diagnosis {diagnosis}
+SetDiagnosis Take diagnosis {diagnosis}
+SetDiagnosis Add the following diagnosis {diagnosis}
+SetDiagnosis Add diagnosis {diagnosis}
+GetLastDiagnosis get the last diagnosis from the system
+GetLastDiagnosis what is the last diagnosis in the system
+GetLastDiagnosis get last diagnosis in the system
+GetLastDiagnosis what is the last diagnosis recorded
+GetLastDiagnosis what is the last diagnosis entered
+GetLastDiagnosis get the last diagnosis entered
+GetLastDiagnosis get the last last diagnosis
+GetLastDiagnosis get last diagnosis
