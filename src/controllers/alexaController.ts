@@ -11,6 +11,10 @@ export class AlexaController extends IntentController {
         this._dynamodb = new DynamoDB({apiVersion: '2012-08-10'});
     }
 
+    today() {
+        return new Date();
+    }
+
     newSession(): void {
         this.handler.emit(':ask', 'Welcome to the medical recording app scribe. I will assist you in recording and accessing the details of your patient. Please start by saying Patient ID: followed by the identification number of the patient.');
     }
@@ -78,7 +82,7 @@ export class AlexaController extends IntentController {
     takeNote() {
         const request: IntentRequest = this.handler.event.request;
 
-        this.handler.attributes['current_date'] = new Date();
+        this.handler.attributes['current_date'] = this.today();
 
         if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
             this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
@@ -103,6 +107,7 @@ export class AlexaController extends IntentController {
 
             notes.push(noteInput[0]);
 
+
             const params = {
                 TableName: 'Patients',
                 Item: {
@@ -114,6 +119,7 @@ export class AlexaController extends IntentController {
                     'Diagnosis': {L: diagnosis}
                 },
             };
+
             this._dynamodb.putItem(params, (err) => {
                 if (err) {
                     // TODO: Emit event
@@ -159,7 +165,7 @@ export class AlexaController extends IntentController {
     reRecordNote() {
         const request: IntentRequest = this.handler.event.request;
 
-        this.handler.attributes['current_date'] = new Date();
+        this.handler.attributes['current_date'] = this.today();
 
         if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
             this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
@@ -213,7 +219,7 @@ export class AlexaController extends IntentController {
     setDiagnosis() {
         const request: IntentRequest = this.handler.event.request;
 
-        this.handler.attributes['current_date'] = new Date();
+        this.handler.attributes['current_date'] = this.today();
 
         if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
             this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');

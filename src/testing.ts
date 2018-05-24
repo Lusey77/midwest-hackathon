@@ -1,5 +1,7 @@
 import * as Alexa from "alexa-sdk";
 import {RequestBody} from "alexa-sdk";
+import {SlotValue} from "alexa-sdk";
+import {IntentRequest} from "alexa-sdk";
 
 export class MockHandler implements Alexa.Handler<Alexa.Request> {
     on: any;
@@ -24,5 +26,28 @@ export class MockHandler implements Alexa.Handler<Alexa.Request> {
 
     setEvent(event: RequestBody<Alexa.Request>) {
         this.event = event;
+    }
+
+    createEvent(slots: Record<string, SlotValue>) {
+        const request: IntentRequest = {
+            type: 'IntentRequest',
+            requestId: '1',
+            timestamp: 'atimestamp',
+            intent: {
+                name: 'Who knows',
+                slots: slots
+            }
+        };
+
+        this.event = {
+            version: '1',
+            session: undefined,
+            request: request,
+            context: undefined
+        };
+    }
+
+    setAttributes(key: string, value: string) {
+        this.attributes[key] = value;
     }
 }
