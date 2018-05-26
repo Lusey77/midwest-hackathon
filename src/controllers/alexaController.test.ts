@@ -26,6 +26,45 @@ describe('Alexa Controller', () => {
         });
     });
 
+    describe('Unopened session', () => {
+        it('emits expected message when first name is null', () => {
+            mockHandler = new MockHandler();
+            emitStub = sinon.stub(mockHandler, 'emit');
+            alexaController = new AlexaController(mockHandler);
+            const slots: Record<string, SlotValue> = {
+                'birthday': {
+                    name: 'value',
+                    value: 19890615
+                }
+            };
+
+            mockHandler.createEvent(slots);
+            alexaController.getBirthday();
+
+            expect(emitStub).to.have.been.calledOnce;
+            expect(emitStub).to.have.been.calledWith(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
+        });
+
+        it('emits expected message when first name is null', () => {
+            mockHandler = new MockHandler();
+            mockHandler.setAttributes('first_name', 'Kaleb');
+            emitStub = sinon.stub(mockHandler, 'emit');
+            alexaController = new AlexaController(mockHandler);
+            const slots: Record<string, SlotValue> = {
+                'birthday': {
+                    name: 'value',
+                    value: 19890615
+                }
+            };
+
+            mockHandler.createEvent(slots);
+            alexaController.getBirthday();
+
+            expect(emitStub).to.have.been.calledOnce;
+            expect(emitStub).to.have.been.calledWith(':ask', 'The birthday that you gave does not match what is stated in the database. Please verify the birthday again or select a different patient.');
+        });
+    });
+
     describe('GetName', () => {
         it('calls dynamoDb', () => {
             mockHandler = new MockHandler();

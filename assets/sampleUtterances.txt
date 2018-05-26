@@ -1,3 +1,7 @@
+Unhandled unhandled
+CancelIntent cancel
+StopIntent stop
+HelpIntent help
 GetName patient {PatientId}
 GetName the patient id is {PatientId}
 GetName patient i.d. {PatientId}

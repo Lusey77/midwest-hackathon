@@ -1,7 +1,7 @@
 import {Handler, IntentRequest, Request} from 'alexa-sdk';
 import {DynamoDB} from 'aws-sdk';
 import {IntentController} from './intentController';
-import {date, interjection, pause} from './ssml.helpers';
+import {date, pause} from './ssml.helpers';
 
 export class AlexaController extends IntentController {
     private _dynamodb: DynamoDB;
@@ -13,6 +13,16 @@ export class AlexaController extends IntentController {
 
     today() {
         return new Date();
+    }
+
+    isOpenSession(): boolean {
+        if (this.handler.attributes['first_name'] === undefined) {
+            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.', '');
+        } else if (this.handler.attributes['date_of_birth'] === undefined) {
+            this.handler.emit(':ask', 'The birthday that you gave does not match what is stated in the database. Please verify the birthday again or select a different patient.');
+        } else {
+            return true;
+        }
     }
 
     newSession(): void {
@@ -55,11 +65,7 @@ export class AlexaController extends IntentController {
 
         this.handler.attributes['patient_stated_dob'] = request.intent.slots.birthday.value;
 
-        if (this.handler.attributes['first_name'] === undefined) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.', '');
-        } else if (this.handler.attributes['patient_stated_dob'] !== this.handler.attributes['date_of_birth']) {
-            this.handler.emit(':ask', 'The birthday that you gave does not match what is stated in the database. Please verify the birthday again or select a different patient.');
-        } else {
+        if (this.isOpenSession.bind(this)()) {
             this.handler.emit(':ask', `We will now start entering information for ${this.handler.attributes['first_name']} ${pause} born on ${this.handler.attributes['date_of_birth']} ${pause}. To record a note say take note, record note, or make note followed by the note that you would like to record.`, '');
         }
     }
@@ -70,11 +76,7 @@ export class AlexaController extends IntentController {
         const systolic = request.intent.slots.systolic.value;
         const diastolic = request.intent.slots.diastolic.value;
 
-        if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        } else if (this.handler.attributes['first_name'] !== undefined && this.handler.attributes['date_of_birth'] === undefined) {
-            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
-        } else {
+        if (this.isOpenSession.bind(this)()) {
             this.handler.emit(':ask', `${this.handler.attributes['first_name']}'s blood pressure is ${systolic} over ${diastolic}`, '');
         }
     }
@@ -84,11 +86,7 @@ export class AlexaController extends IntentController {
 
         this.handler.attributes['current_date'] = this.today();
 
-        if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        } else if (this.handler.attributes['first_name'] !== undefined && this.handler.attributes['date_of_birth'] === undefined) {
-            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
-        } else {
+        if (this.isOpenSession.bind(this)) {
             const noteToAdd = request.intent.slots.note.value;
 
             const date = this.handler.attributes['current_date'].toString().slice(0, -24);
@@ -131,11 +129,7 @@ export class AlexaController extends IntentController {
     }
 
     getLastNote() {
-        if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        } else if ((this.handler.attributes['first_name'] !== undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
-            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
-        } else {
+        if (this.isOpenSession.bind(this)()) {
             const params = {
                 TableName: 'Patients',
                 Key: {
@@ -167,11 +161,7 @@ export class AlexaController extends IntentController {
 
         this.handler.attributes['current_date'] = this.today();
 
-        if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        } else if ((this.handler.attributes['first_name'] !== undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
-            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19890726)}`);
-        } else {
+        if (this.isOpenSession.bind(this)()) {
             const noteToAdd = request.intent.slots.query.value;
 
             const date = this.handler.attributes['current_date'].toString().slice(0, -24);
@@ -221,11 +211,7 @@ export class AlexaController extends IntentController {
 
         this.handler.attributes['current_date'] = this.today();
 
-        if ((this.handler.attributes['first_name'] === undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        } else if ((this.handler.attributes['first_name'] !== undefined) && (this.handler.attributes['date_of_birth'] === undefined)) {
-            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19890726)}`);
-        } else {
+        if (this.isOpenSession.bind(this)()) {
             let diagnosisToAdd = request.intent.slots.diagnosis.value;
 
             let date = this.handler.attributes['current_date'].toString().slice(0, -24);
@@ -268,11 +254,7 @@ export class AlexaController extends IntentController {
     }
 
     getLastDiagnosis() {
-        if (this.handler.attributes['first_name'] === undefined && this.handler.attributes['date_of_birth'] === undefined) {
-            this.handler.emit(':ask', 'You have not stated the name of the patient. Please start by saying Patient: followed by the name of the patient.');
-        } else if (this.handler.attributes['first_name'] !== undefined && this.handler.attributes['date_of_birth'] === undefined) {
-            this.handler.emit(':ask', `You have not stated the birthday of the patient. Please verify the patient by stating the paytients birthday like this, ${date(19910726)}`);
-        } else {
+        if (this.isOpenSession.bind(this)()) {
             const params = {
                 TableName: 'Patients',
                 Key: {

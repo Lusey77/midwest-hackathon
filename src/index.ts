@@ -1,9 +1,9 @@
 import * as Alexa from 'alexa-sdk';
-import {AlexaController} from './controllers/alexaController';
-import {AmazonController} from './controllers/amazonController';
+import { AlexaController } from './controllers/alexaController';
+import { AmazonController } from './controllers/amazonController';
 
-export const handler = function (event: Alexa.RequestBody<Alexa.Request>, context: Alexa.Context): void {
-    const alexa = Alexa.handler(event, context);
+const handler = function (event: Alexa.RequestBody<Alexa.Request>, context: Alexa.Context, callback: (err: any, response: any) => void): void {
+    const alexa = Alexa.handler(event, context, callback);
     alexa.registerHandlers({
         'NewSession': function () {
             new AlexaController(this).newSession();
@@ -32,13 +32,13 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
         'GetLastDiagnosis': function () {
             new AlexaController(this).getLastDiagnosis();
         },
-        'AMAZON.HelpIntent': function () {
+        'HelpIntent': function () {
             new AmazonController(this).help();
         },
-        'AMAZON.CancelIntent': function () {
+        'CancelIntent': function () {
             new AmazonController(this).cancel();
         },
-        'AMAZON.StopIntent': function () {
+        'StopIntent': function () {
             new AmazonController(this).stop();
         },
         'Unhandled': function () {
@@ -47,3 +47,5 @@ export const handler = function (event: Alexa.RequestBody<Alexa.Request>, contex
     });
     alexa.execute();
 };
+
+export default handler;

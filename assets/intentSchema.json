@@ -1,0 +1,82 @@
+{
+  "intents": [
+    {
+      "intent": "CancelIntent",
+      "samples": []
+    },
+    {
+      "intent": "HelpIntent",
+      "samples": []
+    },
+    {
+      "intent": "StopIntent",
+      "samples": []
+    },
+    {
+      "intent": "GetName",
+      "slots": [
+        {
+          "name": "PatientId",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "GetBirthday",
+      "slots": [
+        {
+          "name": "birthday",
+          "type": "AMAZON.DATE"
+        }
+      ]
+    },
+    {
+      "intent": "BloodPressure",
+      "slots": [
+        {
+          "name": "systolic",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "diastolic",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "TakeNote",
+      "slots": [
+        {
+          "name": "note",
+          "type": "AMAZON.SearchQuery"
+        }
+      ]
+    },
+    {
+      "intent": "GetLastNote",
+      "slots": []
+    },
+    {
+      "intent": "RerecordNote",
+      "slots": [
+        {
+          "name": "query",
+          "type": "AMAZON.SearchQuery"
+        }
+      ]
+    },
+    {
+      "intent": "SetDiagnosis",
+      "slots": [
+        {
+          "name": "diagnosis",
+          "type": "AMAZON.SearchQuery"
+        }
+      ]
+    },
+    {
+      "intent": "GetLastDiagnosis",
+      "slots": []
+    }
+  ]
+}
